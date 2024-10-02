@@ -12,7 +12,7 @@ namespace JwtAuthentication.Controllers
     [ApiController]
     public class AuthenticationController(UserManager<User> _userManager,SignInManager<User> _signInManager,IMapper _mapper, AuthenticationServices _authenticationServices) : ControllerBase
     {
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<IdentityResult> RegisterUser([FromBody]UserForRegistrationDto model)
         {
             var user = _mapper.Map<User>(model);

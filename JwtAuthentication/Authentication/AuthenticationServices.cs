@@ -12,8 +12,9 @@ namespace JwtAuthentication.Authentication
     {
         private User? _user;
 
-
+        #region
         //Kullanıcı adı ve şifreye bakarak böyle bir kullanıcı olup olmadığını sorguluyoruz.
+        #endregion
         public async Task<bool> ValidateUser(UserForAuthenticationDto userForAuthDto)
         {
             _user = await _userManager.FindByNameAsync(userForAuthDto.UserName);
@@ -25,6 +26,7 @@ namespace JwtAuthentication.Authentication
         }
 
 
+        //populateExp ifadesi true olursa refreshtokenla ilgili bir sure uzetmasi yapacagiz false olursa refresh tokenin suresune dokunmayacaagiz
         public async Task<TokenDto> CreateToken(bool populateExp)
         {
             
@@ -72,8 +74,10 @@ namespace JwtAuthentication.Authentication
             return await CreateToken(populateExp: false);
         }
 
+        #region
         //Bu metot, JWT (JSON Web Token) ile güvenli bir şekilde imza atmak için kullanılan SigningCredentials nesnesini oluşturmaktadır. JWT'ler, bir kullanıcının kimliğini doğrulamak ve yetkilendirmek için sıklıkla kullanılan bir token türüdür. Bu token'lar, genellikle sunucu tarafından imzalanarak doğrulukları sağlanır ve bu imzanın güvenliğini sağlamak için SigningCredentials kullanılır.
         //Bu metodun amacı, JWT token'larının imzalanması için gereken SigningCredentials nesnesini sağlamaktır. JWT token'larının doğruluğunu ve güvenliğini sağlamak için bu imzalama bilgisi kullanılır. Bu sayede, token'ın yetkisiz kişiler tarafından değiştirilmediği veya sahte olmadığı garantilenir. Metot, konfigürasyon ayarlarından gizli anahtarı alır, bu anahtarı bir SymmetricSecurityKey nesnesine dönüştürür ve bu anahtarı kullanarak bir SigningCredentials nesnesi oluşturur. Bu nesne, JWT'nin imzalanmasında kullanılır.
+        #endregion
         private SigningCredentials GetSigninCredentials()
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
@@ -84,8 +88,9 @@ namespace JwtAuthentication.Authentication
 
         }
 
-
+        #region
         //Bu metodun temel amacı, bir kullanıcının kimlik bilgilerini ve rollerini içeren claim'leri toplamak ve bir liste olarak döndürmektir. Claim'ler, genellikle kimlik doğrulama ve yetkilendirme süreçlerinde kullanılır. JWT gibi token tabanlı sistemlerde, bu claim'ler token'ın içerisine eklenir ve token'ın doğruluğunu sağlamak için kullanılır
+        #endregion
         private async Task<List<Claim>> GetClaims()
         {
             var claims = new List<Claim>()
@@ -104,7 +109,9 @@ namespace JwtAuthentication.Authentication
             return claims;
         }
 
+        #region
         //Bu metodun amacı, JWT (JSON Web Token) oluşturmak için gerekli tüm ayarları yapılandırarak bir JwtSecurityToken nesnesi oluşturmaktır. Token'ın geçerlilik süresi, imzalama bilgileri ve claim'ler gibi bilgileri içerir ve bu token, kullanıcının kimlik doğrulama işlemlerinde güvenli bir şekilde kullanılır.
+        #endregion
         private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials , List<Claim> claims)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
@@ -120,7 +127,7 @@ namespace JwtAuthentication.Authentication
             return tokenOptions;
         }
 
-
+        //buradaki mantik su tahmin edilmesi zor bir ifade uretecegiz ve bu ifade ile belirli bir endpointe gelindigi zaman tokeni yenileyip kullanicinin tokenini yenilmes olacagiz bu sekilde yeni tokenla devam etmesini saglayacagiz
         private string GenerateRefreshToken()
         {
             var randomNumber = new byte[32];
@@ -132,8 +139,10 @@ namespace JwtAuthentication.Authentication
             }
         }
 
+        #region
         //Principal gordugumuz yerde Burada kullanici bilgilerini ihtiyac vardir 
         //Süresi geçmiş tokendan gerekli bilgileri alacağız
+        #endregion
         private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
